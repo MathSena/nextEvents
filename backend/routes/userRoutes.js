@@ -31,14 +31,39 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', verifyToken, async (req, res) => {
   const token = req.headers('auth-token')
   const user = await getUserByToken(token)
-  const userReqIdId = req.body._id
+  const userReqIdId = req.body.id
   const password = req.body.password
   const confirmPassword = req.body.confirmPassword
 
-  const userId = user._id.toString()
+  const userId = user.id.toString()
 
   if (userId !== userReqIdId) {
     return res.status(401).json({ message: 'Access denied' })
+  }
+
+  const updateUser = {
+    name: req.body.name,
+    email: req.body.email
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: 'Passwords do not match' })
+  }
+
+  const salt = await bcrypt.genSalt(10)
+  const hashedPassword = await bcrypt.hash(password, salt)
+
+  updateUser.password = hashedPassword
+
+  try {
+    const updated = await User.findOneAndUpdate(
+      { _id: user },
+      { $set: updateUser },
+      { new: true }
+    )
+    res.json({ error: null, updated })
+  } catch (err) {
+    res.status(400).json({ message: 'User not found' })
   }
 })
 
