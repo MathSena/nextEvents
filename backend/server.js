@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const env = require('dotenv').config()
 const authRoutes = require('./routes/authRoutes.js')
 const userRoutes = require('./routes/userRoutes.js')
+const partyRoutes = require('./routes/partyRoutes.js')
 
 const username = process.env.DB_USERNAME
 const password = process.env.DB_PASSWORD
@@ -27,6 +28,7 @@ app.use(express.json())
 app.use(express.static('public'))
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/party', partyRoutes)
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the NextEvents API' })
