@@ -1,16 +1,18 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 
+// Assegure-se de carregar o JWT_SECRET corretamente
+require('dotenv').config()
+
 const getUserByToken = async token => {
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied' })
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id)
+    return user
+  } catch (err) {
+    console.error('Error fetching user by token:', err)
+    throw err
   }
-
-  const decoded = jwt.verify(token, 'secret')
-  const userId = decoded.id
-  const user = await User.findOne({ id: decoded.id })
-
-  return user
 }
 
 module.exports = getUserByToken
