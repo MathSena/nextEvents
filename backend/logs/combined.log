@@ -1,0 +1,4 @@
+{"level":"info","message":"Event created successfully: 66565011391733a49717c0ae","timestamp":"2024-05-28 22:43:45"}
+{"level":"info","message":"Fetched all public events","timestamp":"2024-05-28 22:44:00"}
+{"eventId":"66550171721a3fe9005c08e3","level":"error","message":"Invalid date format on update","timestamp":"2024-05-28 22:44:12"}
+{"eventId":"66550171721a3fe9005c08e3","level":"error","message":"Invalid date format on update","timestamp":"2024-05-28 22:44:18"}
