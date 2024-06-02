@@ -1,7 +1,7 @@
 <template>
   <div class="register">
     <h2>Formulário de Registro</h2>
-    <el-form ref="form" :model="form" :rules="rules" @submit.native.prevent="submitForm">
+    <el-form ref="form" :model="form" :rules="rules" @submit.native.prevent="registerUser">
       <el-form-item
         v-for="field in fields"
         :key="field.id"
@@ -16,7 +16,7 @@
           :prefix-icon="field.icon"
         />
       </el-form-item>
-      <el-button type="primary" native-type="submit" @click="validateForm">{{ btnText }} Registrar</el-button>
+      <el-button type="primary" native-type="submit" @click="validateForm">Registrar</el-button>
     </el-form>
   </div>
 </template>
@@ -79,19 +79,50 @@ export default {
     validateForm() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          alert('submit!');
+          this.registerUser();
         } else {
-          console.log('error submit!!');
           return false;
         }
       });
     },
-    submitForm() {
-      this.$refs.form.validate().then(success => {
-        if (success) {
-          console.log('Formulário submetido', this.form);
+    async registerUser() {
+      const data ={
+        name: this.form.name,
+        email: this.form.email,
+        password: this.form.password,
+        confirmPassword: this.form.confirmpassword
+      }
+
+      const jsonData = JSON.stringify(data);
+
+      await fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: jsonData
+      })
+      .then(resp => resp.json())
+      .then(data => {
+        let auth = false;
+
+        if(data.error) {
+          this.msg = data.error.message
+        }else{
+          auth = true;
+          this.msg = data.msg,
+          this.msgClass = "sucess"
         }
-      });
+
+        setTimeout(() =>{
+          if(!auth){
+            this.msg = ""
+          }else{
+            // Redirect
+            this.$router.push("dashboard")
+          }
+        })
+      })
     }
   }
 }
